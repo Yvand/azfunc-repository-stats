@@ -1,12 +1,9 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js project to Azure Function App - projects-statistics-funcs
+name: Build and deploy Node.js project to Azure Functions App
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
 
 env:
@@ -29,7 +26,7 @@ jobs:
         shell: bash
         run: |
           pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          npm install
+          npm install --loglevel=error
           npm run build --if-present
           npm run test --if-present
           popd
@@ -38,7 +35,9 @@ jobs:
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: 'projects-statistics-funcs'
-          slot-name: 'Production'
+          app-name: 'projects-statistics'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F401DD5856D049EA94F4D1DF74A0BD58 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          respect-funcignore: true
+          sku: flexconsumption
+          remote-build: true

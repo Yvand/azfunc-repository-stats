@@ -35,6 +35,7 @@ export async function GetData(request: HttpRequest, context: InvocationContext):
     return { status: 400, body: "Invalid parameters." };
   }
 
+  context.log(`[${projectName}] Getting data...`);
   const cosmosDBDocument: RepositoryDataDocument = await GetLatestDocumentFromCosmosDB(projectName); // Query CosmosDB
   const cosmosDBDocumentStringified = JSON.stringify(cosmosDBDocument);
   return { body: `${callback}(${cosmosDBDocumentStringified});` };
@@ -91,7 +92,7 @@ app.http('GetData', {
 
 app.timer('RefreshData', {
   schedule: Settings.FuncRefreshDataSchedule,
-  runOnStartup: false,
+  runOnStartup: true,
   handler: RefreshData,
   return: cosmosOutput
 });
